@@ -15031,6 +15031,6 @@ angular.module('mm.core')
     "wsservice" : "moodle_mobile_app",
     "wsextservice" : "local_mobile",
     "demo_sites": {"student": {"url": "http://", "username": "student", "password": "moodle"}, "teacher": {"url": "http://", "username": "teacher", "password": "moodle"}, "cva": {"url": "http://", "username": "student", "password": "student"}},
-    "gcmpn": "694767596569"
+    "gcmpn": "408602687357"
 }
 );
