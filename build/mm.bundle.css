@@ -8156,13 +8156,18 @@ select.mma-mod_survey-select {
     text-align: left;
 }
 .academic_summary table tr td {
-    background: #fff none repeat scroll 0 0 !important;
+    /*background: #fff none repeat scroll 0 0 !important;*/
     border: 1px solid #ddd;
     color: #333;
     font-size: 14px !important;
     padding: 15px 10px !important;
     text-align: center;
 }
+
+.academic_summary table tr:nth-child(even) {
+    background: #f5f5f5;
+}
+
 .academic_summary{
   overflow-x: auto;
 }
