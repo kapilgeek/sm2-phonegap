@@ -14954,6 +14954,221 @@ angular.module('mm.addons.missingassignment')
 
 //----------------------------------------------------------------
 
+//----------------------------------------------------------------
+
+//by geek for adding conductlog addon
+angular.module('mm.addons.conductlog')
+.controller('mmaConductlogListCtrl', ["$scope", "$mmUtil", "$mmaConductlog", "mmaConductlogListLimit", "$sce", "$compile", "$state", function($scope, $mmUtil, $mmaConductlog, mmaConductlogListLimit, $sce, $compile, $state) {
+
+    var readCount = 0,
+        unreadCount = 0;
+    $scope.conductlog = [];   
+
+      
+    $scope.action = function(e, course) {
+         
+        console.log(course);
+        $state.go('site.mm_course', {course: course});
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+
+     
+    
+    $scope.actionGrade = function(e, course) {
+        
+       // console.log(course);
+        $state.go('site.grades', {course: course});
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    
+
+
+    function fetchConductlog(refresh) {
+        if (refresh) {
+            readCount = 0;
+            unreadCount = 0;
+        }
+
+    
+
+        return $mmaConductlog.getConductlog(true,unreadCount, mmaConductlogListLimit).then(function(gotres_conductlog) {
+
+
+            
+             
+            $scope.conductlog = gotres_conductlog;
+            
+   
+            $scope.canLoadMore = false;
+        }, function(error) {                
+                    
+                    if (error) {
+                        $mmUtil.showErrorModal(error);
+                    } else {
+                        $mmUtil.showErrorModal('mma.conductlog.errorgetconductlog', true);
+                    }
+                    $scope.canLoadMore = false;
+        });
+
+        
+    }
+    fetchConductlog().finally(function() {        
+        $scope.conductlogLoaded = true;
+    });
+    $scope.refreshConductlog = function() {
+        $mmaConductlog.invalidateConductlogList().finally(function() {
+            fetchConductlog(true).finally(function() {
+                $scope.$broadcast('scroll.refreshComplete');
+            });
+        });
+    };
+    $scope.loadMoreConductlog = function(){
+        fetchConductlog().finally(function() {
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
+    };
+}]);
+angular.module('mm.addons.conductlog')
+.directive('mmaConductlogActions', ["$log", "$mmModuleActionsDelegate", "$state", function($log, $mmModuleActionsDelegate, $state) {
+    $log = $log.getInstance('mmaConductlogActions');
+    function link(scope, element, attrs) {
+        if (scope.contexturl) {
+            scope.actions = $mmModuleActionsDelegate.getActionsFor(scope.contexturl, scope.courseid);
+        }
+    }
+    function controller($scope) {
+        $scope.jump = function(e, state, stateParams) {
+            e.stopPropagation();
+            e.preventDefault();
+            $state.go(state, stateParams);
+        };
+    }
+
+
+controller.$inject = ["$scope"];
+    return {
+        controller: controller,
+        link: link,
+        restrict: 'E',
+        scope: {
+            contexturl: '=',
+            courseid: '='
+        },
+        templateUrl: 'addons/conductlog/templates/actions.html',
+    };
+}]);
+angular.module('mm.addons.conductlog')
+.filter('mmaConductlogFormat', ["$mmText", function($mmText) {
+  return function(text) {
+    text = text.replace(/-{4,}/ig, '');
+    text = $mmText.replaceNewLines(text, '<br />');
+    return text;
+  };
+}]);
+angular.module('mm.addons.conductlog')
+.factory('$mmaConductlogHandlers', ["$log", "$mmaConductlog", function($log, $mmaConductlog) {
+    $log = $log.getInstance('$mmaConductlogHandlers');
+    var self = {};
+    self.sideMenuNav = function() {
+        var self = {};
+        self.isEnabled = function() {
+            return $mmaConductlog.isPluginEnabled();
+        };
+        self.getController = function() {
+            return function($scope) {
+                $scope.icon = 'ion-clipboard';
+                $scope.title = 'Conduct Log';
+                $scope.state = 'site.conductlog';
+            };
+        };
+        return self;
+    };
+    return self;
+}]);
+angular.module('mm.addons.conductlog')
+.factory('$mmaConductlog', ["$q", "$log", "$mmSite", "$mmSitesManager", "mmaConductlogListLimit", function($q, $log, $mmSite, $mmSitesManager, mmaConductlogListLimit) {
+    $log = $log.getInstance('$mmaconductlog');
+    var self = {};
+    
+    function formatconductlogData(conductlog) {
+        angular.forEach(conductlog, function(conductlog) {
+            if (conductlog.contexturl && conductlog.contexturl.indexOf('/mod/forum/')) {
+                conductlog.mobiletext = conductlog.smallmessage;
+            } else {
+                conductlog.mobiletext = conductlog.fullmessage;
+            }
+            
+
+            var cid = conductlog.match(/course\/view\.php\?id=([^"]*)/);
+        
+            if (cid && cid[1]) {
+                conductlog.courseid = cid[1];
+            }
+        });
+    }
+
+    function getConductlogCacheKey() {
+        return 'mmaConductlog:list';
+    };
+    self.getConductlog = function(read, limitFrom, limitNumber) {        
+
+
+        limitFrom = limitFrom || 0;
+        limitNumber = limitNumber || mmaConductlogListLimit;
+        $log.debug('Get ' + (read ? 'read' : 'unread') + ' conductlog from ' + limitFrom + '. Limit: ' + limitNumber);
+        var data = {
+            useridto: $mmSite.getUserId(),
+            useridfrom: 0,
+            type: 'conductlog',
+            read: read ? 1 : 0,
+            newestfirst: 1,
+            limitfrom: limitFrom,
+            limitnum: limitNumber
+        };
+        var preSets = {
+            cacheKey: getConductlogCacheKey()
+        };
+        return $mmSite.read('core_message_get_messages', data, preSets).then(function(response) {        
+            console.log(response);            
+
+            if (response.res_conductlog) {
+                var conductlog = response;
+               // console.log("conductlog"+ conductlog);
+                //formatConductlogData(conductlog);
+                return conductlog;
+            } else {
+                return $q.reject();
+            }
+        });
+    };
+   
+   
+
+    self.invalidateConductlogList = function() {
+        return $mmSite.invalidateWsCacheForKey(getConductlogCacheKey());
+    };
+    self.isPluginEnabled = function() {
+        return $mmSite.wsAvailable('core_message_get_messages');
+    };
+    self.isPluginEnabledForSite = function(siteid) {
+        return $mmSitesManager.getSite(siteid).then(function(site) {
+            if (!site.wsAvailable('core_message_get_messages')) {
+                return $q.reject();
+            }
+        });
+    };
+    return self;
+}]);
+
+//End of conductlog 
+
+//----------------------------------------------------------------
+
+
 angular.module('mm.addons.remotestyles')
 .factory('$mmaRemoteStyles', ["$log", "$q", "$mmSite", "$mmSitesManager", "$mmFilepool", "$http", "$mmFS", "mmaRemoteStylesComponent", "mmCoreNotDownloaded", function($log, $q, $mmSite, $mmSitesManager, $mmFilepool, $http, $mmFS, mmaRemoteStylesComponent,
             mmCoreNotDownloaded) {
