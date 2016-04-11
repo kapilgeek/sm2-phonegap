@@ -8382,6 +8382,41 @@ angular.module('mm.addons.missingassignment', ['mm.core'])
 }]);
 //End of missingassignment summary
 
+//by geek adding conductlog addon
+angular.module('mm.addons.conductlog',['mm.core'])
+.constant('mmaConductlogListLimit', 50)
+.constant('mmaConductlogPriority', 800)
+.config(["$stateProvider", "$mmSideMenuDelegateProvider", "mmaConductlogPriority", function($stateProvider, $mmSideMenuDelegateProvider, mmaConductlogPriority) {
+    $stateProvider
+    .state('site.conductlog', {
+        url: '/conductlog',
+        views: {
+            'site': {
+                templateUrl: 'addons/conductlog/templates/list.html',
+                controller: 'mmaConductlogListCtrl'
+            }
+        }
+    });
+    $mmSideMenuDelegateProvider.registerNavHandler('mmaConductlog', '$mmaConductlogHandlers.sideMenuNav', mmaConductlogPriority);
+}])
+.run(["$log", "$mmaConductlog", "$mmUtil", "$state", "$mmAddonManager", function($log, $mmaConductlog, $mmUtil, $state, $mmAddonManager) {
+    $log = $log.getInstance('mmaConductlog');
+    var $mmPushConductlogDelegate = $mmAddonManager.get('$mmPushConductlogDelegate');
+    if ($mmPushConductlogDelegate) {
+        $mmPushConductlogDelegate.registerHandler('mmaConductlog', function(conductlog) {
+            if ($mmUtil.isTrueOrOne(conductlog.notif)) {
+                $mmaConductlog.isPluginEnabledForSite(conductlog.site).then(function() {
+                    $mmaConductlog.invalidateConductlogList().finally(function() {
+                        $state.go('redirect', {siteid: conductlog.site, state: 'site.academicsummary'});
+                        $state.go('redirect', {siteid: conductlog.site, state: 'site.academicsummary'});
+                    });
+                });
+                return true;
+            }
+        });
+    }
+}]);
+//End of conductlog summary
  
 angular.module('mm.addons.pushnotifications', [])
 .constant('mmaPushNotificationsComponent', 'mmaPushNotifications')
