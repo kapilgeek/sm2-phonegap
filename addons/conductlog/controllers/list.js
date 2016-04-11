@@ -28,7 +28,7 @@ angular.module('mm.addons.conductlog')
     var readCount = 0,
         unreadCount = 0;
     $scope.conductlog = [];
-    $scope.conductlogcourse = [];
+    //$scope.conductlogcourse = [];
 
 
     $scope.action = function(e, course) {
@@ -56,10 +56,10 @@ angular.module('mm.addons.conductlog')
         }
 
 
-        return $mmaConductlog.getConductlog(true,unreadCount, mmaConductlogListLimit).then(function(gotSummary) {
-            $scope.conductlog = gotSummary;
+        return $mmaConductlog.getConductlog(true,unreadCount, mmaConductlogListLimit).then(function(gotres_conductlog) {
+            $scope.conductlog = gotres_conductlog;
            // console.log(gotSummary);
-            $scope.conductlogcourse = gotSummary.summary['courseData'];
+           // $scope.conductlogcourse = gotSummary.summary['courseData'];
            // console.log(gotSummary.summary['courseData']);
             //console.log(gotSummary.summary.courseData);
             $scope.canLoadMore = false;

@@ -64,8 +64,8 @@ angular.module('mm.addons.conductlog')
              * @name $mmaConductlogHandlers#sideMenuNav:controller
              */
             return function($scope) {
-                $scope.icon = 'ion-ios-bell';
-                $scope.title = 'mma.conductlog.conductlog';
+                $scope.icon = 'ion-clipboard';
+                $scope.title = 'Conduct Log';
                 $scope.state = 'site.conductlog';
             };
         };

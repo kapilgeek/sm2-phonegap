@@ -88,7 +88,7 @@ angular.module('mm.addons.conductlog')
 
         // Get unread notifications.
         return $mmSite.read('core_message_get_messages', data, preSets).then(function(response) {
-            if (response.summary) {
+            if (response.res_conductlog) {
                 var conductlog = response;
                // formatConductlogData(conductlog);
                 return conductlog;
@@ -107,11 +107,11 @@ angular.module('mm.addons.conductlog')
      * @param {Number} limitFrom   Position of the first notification to get.
      * @param {Number} limitNumber Number of notifications to get.
      * @return {Promise}           Promise resolved with notifications.
-     */
+     
     self.getReadConductlog = function(limitFrom, limitNumber) {
         return self.getConductlog(true, limitFrom, limitNumber);
     };
-
+*/
     /**
      * Get unread notifications from site.
      *
@@ -121,11 +121,11 @@ angular.module('mm.addons.conductlog')
      * @param {Number} limitFrom   Position of the first notification to get.
      * @param {Number} limitNumber Number of notifications to get.
      * @return {Promise}           Promise resolved with notifications.
-     */
+     
     self.getUnreadConductlog = function(limitFrom, limitNumber) {
         return self.getConductlog(false, limitFrom, limitNumber);
     };
-
+*/
     /**
      * Invalidates Conductlog list WS calls.
      *

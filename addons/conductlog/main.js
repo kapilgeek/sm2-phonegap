@@ -17,7 +17,7 @@ angular.module('mm.addons.conductlog', ['mm.core'])
 
 //.constant('mmaNotificationsListLimit', 20) // Max of notifications to retrieve in each WS call.
 .constant('mmaConductlogListLimit', 50)
-.constant('mmaConductlogPriority', 100)
+.constant('mmaConductlogPriority', 830)
 
 .config(function($stateProvider, $mmSideMenuDelegateProvider, mmaConductlogPriority) {
 
