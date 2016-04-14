@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-angular.module('mm', ['ionic', 'mm.core', 'mm.core.course', 'mm.core.courses', 'mm.core.login', 'mm.core.settings', 'mm.core.sidemenu', 'mm.core.textviewer', 'mm.core.user', 'mm.addons.calendar', 'mm.addons.files', 'mm.addons.frontpage', 'mm.addons.grades', 'mm.addons.messages', 'mm.addons.mod_assign', 'mm.addons.mod_book', 'mm.addons.mod_chat', 'mm.addons.mod_choice', 'mm.addons.mod_folder', 'mm.addons.mod_forum', 'mm.addons.mod_imscp', 'mm.addons.mod_label', 'mm.addons.mod_lti', 'mm.addons.mod_page', 'mm.addons.mod_resource', 'mm.addons.mod_survey', 'mm.addons.mod_url', 'mm.addons.notes', 'mm.addons.notifications', 'mm.addons.pushnotifications','mm.addons.academicsummary','mm.addons.missingassignment','mm.addons.conductlog','mm.addons.remotestyles', 'ngCordova', 'angular-md5', 'pascalprecht.translate', 'ngAria', 'ngIOS9UIWebViewPatch'])
+angular.module('mm', ['ionic', 'mm.core', 'mm.core.course', 'mm.core.courses', 'mm.core.login', 'mm.core.settings', 'mm.core.sidemenu', 'mm.core.textviewer', 'mm.core.user', 'mm.addons.calendar', 'mm.addons.files', 'mm.addons.frontpage', 'mm.addons.grades', 'mm.addons.messages', 'mm.addons.mod_assign', 'mm.addons.mod_book', 'mm.addons.mod_chat', 'mm.addons.mod_choice', 'mm.addons.mod_folder', 'mm.addons.mod_forum', 'mm.addons.mod_imscp', 'mm.addons.mod_label', 'mm.addons.mod_lti', 'mm.addons.mod_page', 'mm.addons.mod_resource', 'mm.addons.mod_survey', 'mm.addons.mod_url', 'mm.addons.notes', 'mm.addons.notifications', 'mm.addons.pushnotifications','mm.addons.academicsummary','mm.addons.missingassignment','mm.addons.conductlog','mm.addons.commendation','mm.addons.remotestyles', 'ngCordova', 'angular-md5', 'pascalprecht.translate', 'ngAria', 'ngIOS9UIWebViewPatch'])
 .run(["$ionicPlatform", function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -8380,7 +8380,9 @@ angular.module('mm.addons.missingassignment', ['mm.core'])
         });
     }
 }]);
-//End of missingassignment summary
+//End of Missingassignment summary
+
+
 
 //by geek adding conductlog addon
 angular.module('mm.addons.conductlog',['mm.core'])
@@ -8417,7 +8419,52 @@ angular.module('mm.addons.conductlog',['mm.core'])
     }
 }]);
 //End of conductlog summary
+
  
+angular.module('mm.addons.conductlog',['mm.core'])
+
+//by geek adding commendation addon
+angular.module('mm.addons.commendation',['mm.core'])
+.constant('mmaCommendationListLimit', 50)
+.constant('mmaCommendationPriority', 800)
+.config(["$stateProvider", "$mmSideMenuDelegateProvider", "mmaCommendationPriority", function($stateProvider, $mmSideMenuDelegateProvider, mmaCommendationPriority) {
+    $stateProvider
+    .state('site.commendation', {
+        url: '/commendation',
+        views: {
+            'site': {
+                templateUrl: 'addons/commendation/templates/list.html',
+                controller: 'mmaCommendationListCtrl'
+            }
+        }
+    });
+    $mmSideMenuDelegateProvider.registerNavHandler('mmaCommendation', '$mmaCommendationHandlers.sideMenuNav', mmaCommendationPriority);
+}])
+.run(["$log", "$mmaCommendation", "$mmUtil", "$state", "$mmAddonManager", function($log, $mmaCommendation, $mmUtil, $state, $mmAddonManager) {
+    $log = $log.getInstance('mmaCommendation');
+    var $mmPushCommendationDelegate = $mmAddonManager.get('$mmPushCommendationDelegate');
+    if ($mmPushCommendationDelegate) {
+        $mmPushCommendationDelegate.registerHandler('mmaCommendation', function(commendation) {
+            if ($mmUtil.isTrueOrOne(commendation.notif)) {
+                $mmaCommendation.isPluginEnabledForSite(commendation.site).then(function() {
+                    $mmaCommendation.invalidateCommendationList().finally(function() {
+                        $state.go('redirect', {siteid: commendation.site, state: 'site.academicsummary'});
+                        $state.go('redirect', {siteid: commendation.site, state: 'site.academicsummary'});
+                    });
+                });
+                return true;
+            }
+        });
+    }
+}]);
+//End of Commendation summary
+ 
+
+
+
+
+
+
 angular.module('mm.addons.pushnotifications', [])
 .constant('mmaPushNotificationsComponent', 'mmaPushNotifications')
 .run(["$mmaPushNotifications", "$ionicPlatform", "$rootScope", "$mmEvents", "$mmLocalNotifications", "mmCoreEventLogin", "mmaPushNotificationsComponent", "mmCoreEventSiteDeleted", function($mmaPushNotifications, $ionicPlatform, $rootScope, $mmEvents, $mmLocalNotifications, mmCoreEventLogin,
@@ -14791,11 +14838,11 @@ angular.module('mm.addons.academicsummary')
 //End of academic summary
 //----------------------------------------------------------------
 
-//by Ocean for adding missingassignment addon
+//by geek for adding missingassignment addon
 angular.module('mm.addons.missingassignment')
 .controller('mmaMissingassignmentListCtrl', ["$scope", "$mmUtil", "$mmaMissingassignment", "mmaMissingassignmentListLimit", "$sce", "$compile", "$state", function($scope, $mmUtil, $mmaMissingassignment, mmaMissingassignmentListLimit, $sce, $compile, $state) {
  
-
+     
    
 
     
@@ -14803,6 +14850,9 @@ angular.module('mm.addons.missingassignment')
         unreadCount = 0;
     $scope.missingassignment = [];
    
+   // $scope.missingassignmentcourse = [];
+
+     
 
 
     $scope.action = function(e, course) {
@@ -14814,6 +14864,17 @@ angular.module('mm.addons.missingassignment')
     };
 
  
+     
+    /*
+    $scope.actionGrade = function(e, course) {
+        
+       // console.log(course);
+        $state.go('site.grades', {course: course});
+        e.preventDefault();
+        e.stopPropagation();
+    };*/
+
+    
 
 
     function fetchMissingassignment(refresh) {
@@ -14822,12 +14883,13 @@ angular.module('mm.addons.missingassignment')
             unreadCount = 0;
         }
 
-   
+     
 
         return $mmaMissingassignment.getMissingassignment(true,unreadCount, mmaMissingassignmentListLimit).then(function(gotMAssign) {
 
              
             $scope.missingassignment = gotMAssign;           
+        
             $scope.canLoadMore = false;
         }, function(error) {                
                     
@@ -14839,7 +14901,7 @@ angular.module('mm.addons.missingassignment')
                     $scope.canLoadMore = false;
         });
 
-      
+        
     }
     fetchMissingassignment().finally(function() {        
         $scope.missingassignmentLoaded = true;
@@ -14907,7 +14969,7 @@ angular.module('mm.addons.missingassignment')
         };
         self.getController = function() {
             return function($scope) {
-                $scope.icon = 'ion-ios-list';
+                $scope.icon = 'ion-ios-book';
                 $scope.title = 'Missing Assignment';
                 $scope.state = 'site.missingassignment';
             };
@@ -14928,8 +14990,10 @@ angular.module('mm.addons.missingassignment')
             } else {
                 missingassignment.mobiletext = missingassignment.fullmessage;
             }
+           
             
             var cid = missingassignment.match(/course\/view\.php\?id=([^"]*)/);          
+           
             if (cid && cid[1]) {
                 missingassignment.courseid = cid[1];
             }
@@ -14968,6 +15032,7 @@ angular.module('mm.addons.missingassignment')
         });
     };
    
+   
   
     self.invalidateMissingassignmentList = function() {
         return $mmSite.invalidateWsCacheForKey(getMissingassignmentCacheKey());
@@ -14988,6 +15053,438 @@ angular.module('mm.addons.missingassignment')
 //End of missingassignment summary
 
 //----------------------------------------------------------------
+
+
+//----------------------------------------------------------------
+
+//by geek for adding conductlog addon
+angular.module('mm.addons.conductlog')
+.controller('mmaConductlogListCtrl', ["$scope", "$mmUtil", "$mmaConductlog", "mmaConductlogListLimit", "$sce", "$compile", "$state", function($scope, $mmUtil, $mmaConductlog, mmaConductlogListLimit, $sce, $compile, $state) {
+
+    var readCount = 0,
+        unreadCount = 0;
+    $scope.conductlog = [];   
+
+      
+    $scope.action = function(e, course) {
+         
+        console.log(course);
+        $state.go('site.mm_course', {course: course});
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+
+     
+    
+    $scope.actionGrade = function(e, course) {
+        
+       // console.log(course);
+        $state.go('site.grades', {course: course});
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    
+
+
+    function fetchConductlog(refresh) {
+        if (refresh) {
+            readCount = 0;
+            unreadCount = 0;
+        }
+
+    
+
+        return $mmaConductlog.getConductlog(true,unreadCount, mmaConductlogListLimit).then(function(gotres_conductlog) {
+
+
+            
+             
+            $scope.conductlog = gotres_conductlog;
+            
+   
+            $scope.canLoadMore = false;
+        }, function(error) {                
+                    
+                    if (error) {
+                        $mmUtil.showErrorModal(error);
+                    } else {
+                        $mmUtil.showErrorModal('mma.conductlog.errorgetconductlog', true);
+                    }
+                    $scope.canLoadMore = false;
+        });
+
+        
+    }
+    fetchConductlog().finally(function() {        
+        $scope.conductlogLoaded = true;
+    });
+    $scope.refreshConductlog = function() {
+        $mmaConductlog.invalidateConductlogList().finally(function() {
+            fetchConductlog(true).finally(function() {
+                $scope.$broadcast('scroll.refreshComplete');
+            });
+        });
+    };
+    $scope.loadMoreConductlog = function(){
+        fetchConductlog().finally(function() {
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
+    };
+}]);
+angular.module('mm.addons.conductlog')
+.directive('mmaConductlogActions', ["$log", "$mmModuleActionsDelegate", "$state", function($log, $mmModuleActionsDelegate, $state) {
+    $log = $log.getInstance('mmaConductlogActions');
+    function link(scope, element, attrs) {
+        if (scope.contexturl) {
+            scope.actions = $mmModuleActionsDelegate.getActionsFor(scope.contexturl, scope.courseid);
+        }
+    }
+    function controller($scope) {
+        $scope.jump = function(e, state, stateParams) {
+            e.stopPropagation();
+            e.preventDefault();
+            $state.go(state, stateParams);
+        };
+    }
+
+
+controller.$inject = ["$scope"];
+    return {
+        controller: controller,
+        link: link,
+        restrict: 'E',
+        scope: {
+            contexturl: '=',
+            courseid: '='
+        },
+        templateUrl: 'addons/conductlog/templates/actions.html',
+    };
+}]);
+angular.module('mm.addons.conductlog')
+.filter('mmaConductlogFormat', ["$mmText", function($mmText) {
+  return function(text) {
+    text = text.replace(/-{4,}/ig, '');
+    text = $mmText.replaceNewLines(text, '<br />');
+    return text;
+  };
+}]);
+angular.module('mm.addons.conductlog')
+.factory('$mmaConductlogHandlers', ["$log", "$mmaConductlog", function($log, $mmaConductlog) {
+    $log = $log.getInstance('$mmaConductlogHandlers');
+    var self = {};
+    self.sideMenuNav = function() {
+        var self = {};
+        self.isEnabled = function() {
+            return $mmaConductlog.isPluginEnabled();
+        };
+        self.getController = function() {
+            return function($scope) {
+                $scope.icon = 'ion-clipboard';
+                $scope.title = 'Conduct Log';
+                $scope.state = 'site.conductlog';
+            };
+        };
+        return self;
+    };
+    return self;
+}]);
+angular.module('mm.addons.conductlog')
+.factory('$mmaConductlog', ["$q", "$log", "$mmSite", "$mmSitesManager", "mmaConductlogListLimit", function($q, $log, $mmSite, $mmSitesManager, mmaConductlogListLimit) {
+    $log = $log.getInstance('$mmaconductlog');
+    var self = {};
+    
+    function formatconductlogData(conductlog) {
+        angular.forEach(conductlog, function(conductlog) {
+            if (conductlog.contexturl && conductlog.contexturl.indexOf('/mod/forum/')) {
+                conductlog.mobiletext = conductlog.smallmessage;
+            } else {
+                conductlog.mobiletext = conductlog.fullmessage;
+            }
+            
+
+            var cid = conductlog.match(/course\/view\.php\?id=([^"]*)/);
+        
+            if (cid && cid[1]) {
+                conductlog.courseid = cid[1];
+            }
+        });
+    }
+
+    function getConductlogCacheKey() {
+        return 'mmaConductlog:list';
+    };
+    self.getConductlog = function(read, limitFrom, limitNumber) {        
+
+
+        limitFrom = limitFrom || 0;
+        limitNumber = limitNumber || mmaConductlogListLimit;
+        $log.debug('Get ' + (read ? 'read' : 'unread') + ' conductlog from ' + limitFrom + '. Limit: ' + limitNumber);
+        var data = {
+            useridto: $mmSite.getUserId(),
+            useridfrom: 0,
+            type: 'conductlog',
+            read: read ? 1 : 0,
+            newestfirst: 1,
+            limitfrom: limitFrom,
+            limitnum: limitNumber
+        };
+        var preSets = {
+            cacheKey: getConductlogCacheKey()
+        };
+        return $mmSite.read('core_message_get_messages', data, preSets).then(function(response) {        
+            console.log(response);            
+
+            if (response.res_conductlog) {
+                var conductlog = response;
+               // console.log("conductlog"+ conductlog);
+                //formatConductlogData(conductlog);
+                return conductlog;
+            } else {
+                return $q.reject();
+            }
+        });
+    };
+   
+   
+
+    self.invalidateConductlogList = function() {
+        return $mmSite.invalidateWsCacheForKey(getConductlogCacheKey());
+    };
+    self.isPluginEnabled = function() {
+        return $mmSite.wsAvailable('core_message_get_messages');
+    };
+    self.isPluginEnabledForSite = function(siteid) {
+        return $mmSitesManager.getSite(siteid).then(function(site) {
+            if (!site.wsAvailable('core_message_get_messages')) {
+                return $q.reject();
+            }
+        });
+    };
+    return self;
+}]);
+
+//End of conductlog 
+
+//----------------------------------------------------------------
+
+//by geek for adding commendation addon
+angular.module('mm.addons.commendation')
+.controller('mmaCommendationListCtrl', ["$scope", "$mmUtil", "$mmaCommendation", "mmaCommendationListLimit", "$sce", "$compile", "$state", function($scope, $mmUtil, $mmaCommendation, mmaCommendationListLimit, $sce, $compile, $state) {
+
+    var readCount = 0,
+        unreadCount = 0;
+    $scope.commendation = [];   
+
+      
+    $scope.action = function(e, course) {
+         
+        console.log(course);
+        $state.go('site.mm_course', {course: course});
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+
+     
+    
+    $scope.actionGrade = function(e, course) {
+        
+       // console.log(course);
+        $state.go('site.grades', {course: course});
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    
+
+
+    function fetchCommendation(refresh) {
+        if (refresh) {
+            readCount = 0;
+            unreadCount = 0;
+        }
+
+    
+
+        return $mmaCommendation.getCommendation(true,unreadCount, mmaCommendationListLimit).then(function(gotres_commendation) {
+
+
+            
+             
+            $scope.commendation = gotres_commendation;
+            
+   
+            $scope.canLoadMore = false;
+        }, function(error) {                
+                    
+                    if (error) {
+                        $mmUtil.showErrorModal(error);
+                    } else {
+                        $mmUtil.showErrorModal('mma.commendation.errorgetcommendation', true);
+                    }
+                    $scope.canLoadMore = false;
+        });
+
+        
+    }
+    fetchCommendation().finally(function() {        
+        $scope.commendationLoaded = true;
+    });
+    $scope.refreshCommendation = function() {
+        $mmaCommendation.invalidateCommendationList().finally(function() {
+            fetchCommendation(true).finally(function() {
+                $scope.$broadcast('scroll.refreshComplete');
+            });
+        });
+    };
+    $scope.loadMoreCommendation = function(){
+        fetchCommendation().finally(function() {
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
+    };
+}]);
+angular.module('mm.addons.commendation')
+.directive('mmaCommendationActions', ["$log", "$mmModuleActionsDelegate", "$state", function($log, $mmModuleActionsDelegate, $state) {
+    $log = $log.getInstance('mmaCommendationActions');
+    function link(scope, element, attrs) {
+        if (scope.contexturl) {
+            scope.actions = $mmModuleActionsDelegate.getActionsFor(scope.contexturl, scope.courseid);
+        }
+    }
+    function controller($scope) {
+        $scope.jump = function(e, state, stateParams) {
+            e.stopPropagation();
+            e.preventDefault();
+            $state.go(state, stateParams);
+        };
+    }
+
+
+controller.$inject = ["$scope"];
+    return {
+        controller: controller,
+        link: link,
+        restrict: 'E',
+        scope: {
+            contexturl: '=',
+            courseid: '='
+        },
+        templateUrl: 'addons/commendation/templates/actions.html',
+    };
+}]);
+angular.module('mm.addons.commendation')
+.filter('mmaCommendationFormat', ["$mmText", function($mmText) {
+  return function(text) {
+    text = text.replace(/-{4,}/ig, '');
+    text = $mmText.replaceNewLines(text, '<br />');
+    return text;
+  };
+}]);
+angular.module('mm.addons.commendation')
+.factory('$mmaCommendationHandlers', ["$log", "$mmaCommendation", function($log, $mmaCommendation) {
+    $log = $log.getInstance('$mmaCommendationHandlers');
+    var self = {};
+    self.sideMenuNav = function() {
+        var self = {};
+        self.isEnabled = function() {
+            return $mmaCommendation.isPluginEnabled();
+        };
+        self.getController = function() {
+            return function($scope) {
+                $scope.icon = 'ion-easel';
+                $scope.title = 'Commendation';
+                $scope.state = 'site.commendation';
+            };
+        };
+        return self;
+    };
+    return self;
+}]);
+angular.module('mm.addons.commendation')
+.factory('$mmaCommendation', ["$q", "$log", "$mmSite", "$mmSitesManager", "mmaCommendationListLimit", function($q, $log, $mmSite, $mmSitesManager, mmaCommendationListLimit) {
+    $log = $log.getInstance('$mmacommendation');
+    var self = {};
+    
+    function formatcommendationData(commendation) {
+        angular.forEach(commendation, function(commendation) {
+            if (commendation.contexturl && commendation.contexturl.indexOf('/mod/forum/')) {
+                commendation.mobiletext = commendation.smallmessage;
+            } else {
+                commendation.mobiletext = commendation.fullmessage;
+            }
+            
+
+            var cid = commendation.match(/course\/view\.php\?id=([^"]*)/);
+        
+            if (cid && cid[1]) {
+                commendation.courseid = cid[1];
+            }
+        });
+    }
+
+    function getCommendationCacheKey() {
+        return 'mmaCommendation:list';
+    };
+    self.getCommendation = function(read, limitFrom, limitNumber) {        
+
+
+        limitFrom = limitFrom || 0;
+        limitNumber = limitNumber || mmaCommendationListLimit;
+        $log.debug('Get ' + (read ? 'read' : 'unread') + ' commendation from ' + limitFrom + '. Limit: ' + limitNumber);
+        var data = {
+            useridto: $mmSite.getUserId(),
+            useridfrom: 0,
+            type: 'commendation',
+            read: read ? 1 : 0,
+            newestfirst: 1,
+            limitfrom: limitFrom,
+            limitnum: limitNumber
+        };
+        var preSets = {
+            cacheKey: getCommendationCacheKey()
+        };
+        return $mmSite.read('core_message_get_messages', data, preSets).then(function(response) {        
+            console.log(response);            
+
+            if (response.res_commendation) {
+                var commendation = response;
+             
+                return commendation;
+            } else {
+                return $q.reject();
+            }
+        });
+    };
+   
+   
+
+    self.invalidateCommendationList = function() {
+        return $mmSite.invalidateWsCacheForKey(getCommendationCacheKey());
+    };
+    self.isPluginEnabled = function() {
+        return $mmSite.wsAvailable('core_message_get_messages');
+    };
+    self.isPluginEnabledForSite = function(siteid) {
+        return $mmSitesManager.getSite(siteid).then(function(site) {
+            if (!site.wsAvailable('core_message_get_messages')) {
+                return $q.reject();
+            }
+        });
+    };
+    return self;
+}]);
+
+//End of commendation 
+
+//----------------------------------------------------------------
+
+
+
+//----------------------------------------------------------------
+
+
 
 //----------------------------------------------------------------
 
