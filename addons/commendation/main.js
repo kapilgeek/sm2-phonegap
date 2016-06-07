@@ -17,7 +17,7 @@ angular.module('mm.addons.commendation', ['mm.core'])
 
 //.constant('mmaNotificationsListLimit', 20) // Max of notifications to retrieve in each WS call.
 .constant('mmaCommendationListLimit', 50)
-.constant('mmaCommendationPriority', 100)
+.constant('mmaCommendationPriority', 800)
 
 .config(function($stateProvider, $mmSideMenuDelegateProvider, mmaCommendationPriority) {
 
@@ -47,8 +47,8 @@ angular.module('mm.addons.commendation', ['mm.core'])
             if ($mmUtil.isTrueOrOne(commendation.notif)) {
                 $mmaCommendation.isPluginEnabledForSite(commendation.site).then(function() {
                     $mmaCommendation.invalidateCommendationList().finally(function() {
-                        $state.go('redirect', {siteid: commendation.site, state: 'site.commendation'});
-                    });
+                        $state.go('redirect', {siteid: commendation.site, state: 'site.academicsummary'});
+                        $state.go('redirect', {siteid: commendation.site, state: 'site.academicsummary'});                    });
                 });
                 return true;
             }

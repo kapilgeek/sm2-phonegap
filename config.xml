@@ -3,8 +3,8 @@
         xmlns:gap = "http://phonegap.com/ns/1.0"
         xmlns:android = "http://schemas.android.com/apk/res/android"
         id        = "com.spark.sparkmobile"
-        versionCode = "2006"
-        version   = "2.6">
+        versionCode = "2012"
+        version   = "3.1.0">
     <name>Spark Mobile</name>
     <description>
         Spark Mobile official app

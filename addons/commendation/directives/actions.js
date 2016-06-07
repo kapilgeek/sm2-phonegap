@@ -41,7 +41,8 @@ angular.module('mm.addons.commendation')
             $state.go(state, stateParams);
         };
     }
-
+    
+controller.$inject = ["$scope"];
     return {
         controller: controller,
         link: link,

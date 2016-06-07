@@ -29,13 +29,17 @@ angular.module('mm.addons.academicsummary')
     $scope.academicsummarycourse = [];
 
 
-    $scope.action = function(e, course) {       
+    $scope.action = function(e, course) {
+        //alert('asdf');
+       // console.log(course);
         $state.go('site.mm_course', {course: course});
         e.preventDefault();
         e.stopPropagation();
     };
     
-    $scope.actionGrade = function(e, course) {      
+    $scope.actionGrade = function(e, course) {
+        //alert('asdf');
+       // console.log(course);
         $state.go('site.grades', {course: course});
         e.preventDefault();
         e.stopPropagation();
@@ -51,11 +55,14 @@ angular.module('mm.addons.academicsummary')
 
 
         return $mmaAcademicsummary.getAcademicsummary(true,unreadCount, mmaAcademicsummaryListLimit).then(function(gotSummary) {
-            $scope.academicsummary = gotSummary;            
-            $scope.academicsummarycourse = gotSummary.summary['courseData'];            
+            $scope.academicsummary = gotSummary;
+           // console.log(gotSummary);
+            $scope.academicsummarycourse = gotSummary.summary['courseData'];
+           // console.log(gotSummary.summary['courseData']);
+            //console.log(gotSummary.summary.courseData);
             $scope.canLoadMore = false;
         }, function(error) {
-                    
+                   // alert('ocean three');
                     if (error) {
                         $mmUtil.showErrorModal(error);
                     } else {
@@ -64,7 +71,50 @@ angular.module('mm.addons.academicsummary')
                     $scope.canLoadMore = false;
         });
 
-        
+        /*return $mmaAcademicsummary.getUnreadAcademicsummary(unreadCount, mmaAcademicsummaryListLimit).then(function(unread) {
+            // Don't add the unread notifications to $scope.notifications yet. If there are no unread notifications
+            // that causes that the "There are no notifications" message is shown in pull to refresh.
+            unreadCount += unread.length;
+
+            if (unread.length < mmaAcademicsummaryListLimit) {
+                // Limit not reached. Get read notifications until reach the limit.
+                var readLimit = mmaAcademicsummaryListLimit - unread.length;
+                return $mmaAcademicsummary.getReadAcademicsummary(readCount, readLimit).then(function(read) {
+                    readCount += read.length;
+                    if (refresh) {
+                        $scope.academicsummary = unread.concat(read);
+                    } else {
+                        $scope.academicsummary = $scope.academicsummary.concat(unread).concat(read);
+                    }
+                    $scope.canLoadMore = read.length >= readLimit;
+                    $scope.summaryHTML = $sce.trustAsHtml($scope.academicsummary[0].summary);
+                }, function(error) {
+                    if (unread.length == 0) {
+                        if (error) {
+                            $mmUtil.showErrorModal(error);
+                        } else {
+                            $mmUtil.showErrorModal('mma.academicsummary.errorgetAcademicsummary', true);
+                        }
+                        $scope.canLoadMore = false; // Set to false to prevent infinite calls with infinite-loading.
+                    }
+                });
+            } else {
+                if (refresh) {
+                    $scope.academicsummary = unread;
+                } else {
+                    $scope.academicsummary = $scope.academicsummary.concat(unread);
+                }
+                $scope.summaryHTML = $sce.trustAsHtml($scope.academicsummary[0].summary);
+                $scope.canLoadMore = true;
+            }
+        }, function(error) {
+            if (error) {
+                $mmUtil.showErrorModal(error);
+            } else {
+                $mmUtil.showErrorModal('mma.academicsummary.errorgetacademicsummary', true);
+            }
+            $scope.canLoadMore = false; // Set to false to prevent infinite calls with infinite-loading.
+        });*/
     }
     fetchAcademicsummary().finally(function() {
         $scope.academicsummaryLoaded = true;

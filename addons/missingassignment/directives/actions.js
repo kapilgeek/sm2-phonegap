@@ -42,6 +42,7 @@ angular.module('mm.addons.missingassignment')
         };
     }
 
+controller.$inject = ["$scope"];
     return {
         controller: controller,
         link: link,

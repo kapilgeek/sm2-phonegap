@@ -64,8 +64,8 @@ angular.module('mm.addons.commendation')
              * @name $mmaCommendationHandlers#sideMenuNav:controller
              */
             return function($scope) {
-                $scope.icon = 'ion-ios-bell';
-                $scope.title = 'mma.commendation.commendation';
+                $scope.icon = 'ion-easel';
+                $scope.title = 'Commendation';
                 $scope.state = 'site.commendation';
             };
         };
