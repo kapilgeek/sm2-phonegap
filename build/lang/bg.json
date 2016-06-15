@@ -620,6 +620,7 @@
     "mma.mod_quiz.marks": "Точки",
     "mma.mod_quiz.mustbesubmittedby": "Това изпълнение трябва да бъде предадено до {{$a}}.",
     "mma.mod_quiz.noquestions": "Още не са добавени въпроси",
+    "mma.mod_quiz.noreviewattempt": "Вие нямате право да прегледате този опит.",
     "mma.mod_quiz.notyetgraded": "Още не е оценен",
     "mma.mod_quiz.outof": "{{$a.grade}} от {{$a.maxgrade}}",
     "mma.mod_quiz.outofpercent": "{{$a.grade}} от {{$a.maxgrade}} ({{$a.percent}}%)",
