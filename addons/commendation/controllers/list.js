@@ -28,11 +28,12 @@ angular.module('mm.addons.commendation')
     var readCount = 0,
         unreadCount = 0;
     $scope.commendation = [];
-    $scope.commendationcourse = [];
+    //$scope.commendationcourse = [];
 
 
     $scope.action = function(e, course) {
     
+        console.log(course);
         $state.go('site.mm_course', {course: course});
         e.preventDefault();
         e.stopPropagation();
@@ -46,7 +47,7 @@ angular.module('mm.addons.commendation')
     };
 
     // Convenience function to get commendation. Get unread notifications first.
-    function fetchcommendation(refresh) {
+    function fetchCommendation(refresh) {
 
         if (refresh) {
             readCount = 0;
@@ -54,13 +55,11 @@ angular.module('mm.addons.commendation')
         }
 
 
-        return $mmaCommendation.getCommendation(true,unreadCount, mmaCommendationListLimit).then(function(gotSummary) {
-            $scope.commendation = gotSummary;
-          
-            $scope.commendationcourse = gotSummary.summary['courseData'];
-         
+        return $mmaCommendation.getCommendation(true,unreadCount, mmaCommendationListLimit).then(function(gotres_commendation) {
+            $scope.commendation = gotres_commendation;
+            
             $scope.canLoadMore = false;
-        }, function(error) {
+        }, function(error) {                
                     
                     if (error) {
                         $mmUtil.showErrorModal(error);

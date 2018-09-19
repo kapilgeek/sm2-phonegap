@@ -64,7 +64,7 @@ angular.module('mm.addons.missingassignment')
              * @name $mmaMissingassignmentHandlers#sideMenuNav:controller
              */
             return function($scope) {
-                $scope.icon = 'ion-ios-bell';
+                $scope.icon = 'ion-ios-list';
                 $scope.title = 'mma.missingassignment.missingassignment';
                 $scope.state = 'site.missingassignment';
             };

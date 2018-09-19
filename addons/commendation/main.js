@@ -17,7 +17,7 @@ angular.module('mm.addons.commendation', ['mm.core'])
 
 //.constant('mmaNotificationsListLimit', 20) // Max of notifications to retrieve in each WS call.
 .constant('mmaCommendationListLimit', 50)
-.constant('mmaCommendationPriority', 100)
+.constant('mmaCommendationPriority', 800)
 
 .config(function($stateProvider, $mmSideMenuDelegateProvider, mmaCommendationPriority) {
 

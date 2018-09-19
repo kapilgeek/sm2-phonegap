@@ -16,7 +16,7 @@ angular.module('mm.addons.academicsummary', ['mm.core'])
 
 //.constant('mmaNotificationsListLimit', 20) // Max of notifications to retrieve in each WS call.
 .constant('mmaAcademicsummaryListLimit', 50)
-.constant('mmaAcademicsummaryPriority', 100)
+.constant('mmaAcademicsummaryPriority', 850)
 
 .config(function($stateProvider, $mmSideMenuDelegateProvider, mmaAcademicsummaryPriority) {
 

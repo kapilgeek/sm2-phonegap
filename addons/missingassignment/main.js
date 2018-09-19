@@ -17,7 +17,7 @@ angular.module('mm.addons.missingassignment', ['mm.core'])
 
 //.constant('mmaNotificationsListLimit', 20) // Max of notifications to retrieve in each WS call.
 .constant('mmaMissingassignmentListLimit', 50)
-.constant('mmaMissingassignmentPriority', 100)
+.constant('mmaMissingassignmentPriority', 840)
 
 .config(function($stateProvider, $mmSideMenuDelegateProvider, mmaMissingassignmentPriority) {
 

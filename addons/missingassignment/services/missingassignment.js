@@ -40,7 +40,7 @@ angular.module('mm.addons.missingassignment')
             }
 
             // Try to set courseid the notification belongs to.
-            var cid = missingassignment.summary.match(/course\/view\.php\?id=([^"]*)/);
+            var cid = missingassignment.match(/course\/view\.php\?id=([^"]*)/);
             if (cid && cid[1]) {
                 missingassignment.courseid = cid[1];
             }
@@ -88,7 +88,8 @@ angular.module('mm.addons.missingassignment')
 
         // Get unread notifications.
         return $mmSite.read('core_message_get_messages', data, preSets).then(function(response) {
-            if (response.summary) {
+            console.log(response);
+            if (response.massign) {
                 var missingassignment = response;
                // formatMissingassignmentData(missingassignment);
                 return missingassignment;
@@ -108,9 +109,9 @@ angular.module('mm.addons.missingassignment')
      * @param {Number} limitNumber Number of notifications to get.
      * @return {Promise}           Promise resolved with notifications.
      */
-    self.getReadMissingassignment = function(limitFrom, limitNumber) {
+    /*self.getReadMissingassignment = function(limitFrom, limitNumber) {
         return self.getMissingassignment(true, limitFrom, limitNumber);
-    };
+    };*/
 
     /**
      * Get unread notifications from site.
@@ -122,9 +123,9 @@ angular.module('mm.addons.missingassignment')
      * @param {Number} limitNumber Number of notifications to get.
      * @return {Promise}           Promise resolved with notifications.
      */
-    self.getUnreadMissingassignment = function(limitFrom, limitNumber) {
+    /*self.getUnreadMissingassignment = function(limitFrom, limitNumber) {
         return self.getMissingassignment(false, limitFrom, limitNumber);
-    };
+    };*/
 
     /**
      * Invalidates Missingassignment list WS calls.

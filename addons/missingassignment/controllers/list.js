@@ -28,7 +28,7 @@ angular.module('mm.addons.missingassignment')
     var readCount = 0,
         unreadCount = 0;
     $scope.missingassignment = [];
-    $scope.missingassignmentcourse = [];
+    //$scope.missingassignmentcourse = [];
 
 
     $scope.action = function(e, course) {
@@ -38,14 +38,14 @@ angular.module('mm.addons.missingassignment')
         e.preventDefault();
         e.stopPropagation();
     };
-    
+    /*
     $scope.actionGrade = function(e, course) {
         //alert('asdf');
        // console.log(course);
         $state.go('site.grades', {course: course});
         e.preventDefault();
         e.stopPropagation();
-    };
+    };*/
 
     // Convenience function to get missingassignment. Get unread notifications first.
     function fetchMissingassignment(refresh) {
@@ -56,10 +56,10 @@ angular.module('mm.addons.missingassignment')
         }
 
 
-        return $mmaMissingassignment.getMissingassignment(true,unreadCount, mmaMissingassignmentListLimit).then(function(gotSummary) {
-            $scope.missingassignment = gotSummary;
+        return $mmaMissingassignment.getMissingassignment(true,unreadCount, mmaMissingassignmentListLimit).then(function(gotMassign) {
+            $scope.missingassignment = gotMassign;
            // console.log(gotSummary);
-            $scope.missingassignmentcourse = gotSummary.summary['courseData'];
+            //$scope.missingassignmentcourse = gotSummary.summary['courseData'];
            // console.log(gotSummary.summary['courseData']);
             //console.log(gotSummary.summary.courseData);
             $scope.canLoadMore = false;

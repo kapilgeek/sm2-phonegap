@@ -40,7 +40,7 @@ angular.module('mm.addons.commendation')
             }
 
             // Try to set courseid the notification belongs to.
-            var cid = commendation.summary.match(/course\/view\.php\?id=([^"]*)/);
+            var cid = commendation.match(/course\/view\.php\?id=([^"]*)/);
             if (cid && cid[1]) {
                 commendation.courseid = cid[1];
             }
@@ -87,9 +87,12 @@ angular.module('mm.addons.commendation')
         };
 
         // Get unread notifications.
-        return $mmSite.read('core_message_get_messages', data, preSets).then(function(response) {
-            if (response.summary) {
-                var commendation = response;              
+        return $mmSite.read('core_message_get_messages', data, preSets).then(function(response) {        
+            console.log(response);            
+
+            if (response.res_commendation) {
+                var commendation = response;
+             
                 return commendation;
             } else {
                 return $q.reject();
@@ -106,11 +109,11 @@ angular.module('mm.addons.commendation')
      * @param {Number} limitFrom   Position of the first notification to get.
      * @param {Number} limitNumber Number of notifications to get.
      * @return {Promise}           Promise resolved with notifications.
-     */
+    
     self.getReadCommendation = function(limitFrom, limitNumber) {
         return self.getCommendation(true, limitFrom, limitNumber);
     };
-
+ */
     /**
      * Get unread notifications from site.
      *
@@ -120,11 +123,11 @@ angular.module('mm.addons.commendation')
      * @param {Number} limitFrom   Position of the first notification to get.
      * @param {Number} limitNumber Number of notifications to get.
      * @return {Promise}           Promise resolved with notifications.
-     */
+    
     self.getUnreadCommendation = function(limitFrom, limitNumber) {
         return self.getCommendation(false, limitFrom, limitNumber);
     };
-
+ */
     /**
      * Invalidates Commendation list WS calls.
      *
